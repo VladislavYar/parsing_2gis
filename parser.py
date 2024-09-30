@@ -11,6 +11,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import (
     NoSuchElementException,
     JavascriptException,
+    TimeoutException,
 )
 
 from settings import ParserSettings
@@ -48,6 +49,14 @@ class Parser(ParserSettings):
         Returns:
             list[tuple[str, str]]: список данных по рубрикам.
         """
+        self.driver.get(
+            urljoin(
+                f'{urljoin(self.WEBSITE, self.SLUG_SITY)}/',
+                self.SLUG_RUBRICS,
+            )
+        )
+        if self.SLUG_SITY not in self.driver.current_url:
+            return []
         a_rubrics = self.driver.find_elements(
             By.CSS_SELECTOR, f'a.{self.CLASS_RUBRICS}'
         )
@@ -87,8 +96,14 @@ class Parser(ParserSettings):
                 f'.{self.CLASS_CONTENT_BLOCK}:nth-child(2) '
                 f'a.{self.CLASS_SUBRUBRICS}'
             )
-            self._waiting_element(1, selector)
-            a_subrubrics = self.driver.find_elements(By.CSS_SELECTOR, selector)
+            try:
+                self._waiting_element(1, selector)
+                a_subrubrics = self.driver.find_elements(
+                    By.CSS_SELECTOR,
+                    selector,
+                )
+            except TimeoutException:
+                a_subrubrics = []
         data_subrubrics = []
         a_subrubrics_subrubric = []
         for a_subrubric in a_subrubrics:
@@ -329,20 +344,6 @@ class Parser(ParserSettings):
 
             self.driver.execute_script('window.close()')
             self.driver.switch_to.window(window_before)
-
-            print('-----------------------------------')
-            print('Название:', name)
-            print('Адрес:', address)
-            print('Телефон:', phone)
-            print('Email:', email)
-            print('Изображение:', image)
-            print('Сайт:', site)
-            print('Расписание:', work_schedule)
-            print(
-                'Ссылка:',
-                self._get_firm_link(firm_id),
-                '\n-----------------------------------\n\n',
-            )
         return firms
 
     def _get_firms(self, a_subrubric: tuple[str, str]) -> list[dict[str, str]]:
@@ -375,12 +376,6 @@ class Parser(ParserSettings):
         Returns:
             list: возвращает список данных по фирмам.
         """
-        self.driver.get(
-            urljoin(
-                f'{urljoin(self.WEBSITE, self.SLUG_SITY)}/',
-                self.SLUG_RUBRICS,
-            )
-        )
         a_rubrics = self._get_rubrics()
         data = {}
         for a_rubric in a_rubrics:

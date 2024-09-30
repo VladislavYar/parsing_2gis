@@ -21,3 +21,12 @@ class ParserSettings:
 
     VALIDATE_NAME_CITY = 'Анадырь'
     LOG_LEVEL = 'log-level=3'
+
+
+class GUISettings:
+    """Настройки графического интерфейса."""
+
+    REGULAR_NAME_SITY = r'^[А-ЯЁ][а-яё]+(?:[ _-][А-ЯЁ][а-яё]+)*$'
+    REGULAR_SLUG_SITY = r'^[a-z0-9]+(?:[_-][a-z0-9]+)*$'
+    MAX_ROW_CONSOLE = 21
+    FORMAT_TIME = '%H:%M:%S'
