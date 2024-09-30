@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "parsing-2gis"
+version = "0.1.0"
+description = "Проект парсинга фирм с 2gis."
+authors = ["Vladislav Yaremenko <vlad.yaremenko.98@yandex.ru>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+selenium = "^4.25.0"
+webdriver-manager = "^4.0.2"
+pre-commit = "^3.8.0"
+ruff = "^0.6.8"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".venv",
+    ".vscode",
+    "venv",
+    "frontendruff",
+    "migrations",
+]
+target-version = "py310"
+line-length = 79
+lint.ignore = ["D"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = true
