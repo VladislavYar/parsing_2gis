@@ -15,6 +15,8 @@ from selenium.common.exceptions import (
 )
 
 from settings import ParserSettings
+from exceptions import NoCityOn2GISException
+from typings import RubricsData
 
 
 class Parser(ParserSettings):
@@ -51,12 +53,14 @@ class Parser(ParserSettings):
         """
         self.driver.get(
             urljoin(
-                f'{urljoin(self.WEBSITE, self.SLUG_SITY)}/',
+                f'{urljoin(self.WEBSITE, self.SLUG_CITY)}/',
                 self.SLUG_RUBRICS,
             )
         )
-        if self.SLUG_SITY not in self.driver.current_url:
-            return []
+        if self.SLUG_CITY not in self.driver.current_url:
+            raise NoCityOn2GISException(
+                f'Город "{self.SLUG_CITY}" отсутсвует.',
+            )
         a_rubrics = self.driver.find_elements(
             By.CSS_SELECTOR, f'a.{self.CLASS_RUBRICS}'
         )
@@ -284,7 +288,7 @@ class Parser(ParserSettings):
         """
         return urljoin(
             urljoin(
-                f'{urljoin(self.WEBSITE, self.SLUG_SITY)}/',
+                f'{urljoin(self.WEBSITE, self.SLUG_CITY)}/',
                 f'{self.SLUG_FIRM}/',
             ),
             firm_id,
@@ -305,6 +309,10 @@ class Parser(ParserSettings):
         window_after = self.driver.window_handles[1]
         self.driver.switch_to.window(window_after)
         return window_before
+
+    def signal_parse_firm(self, *arg, **kwarg) -> None:
+        """Сигнал парсинга фирмы."""
+        pass
 
     def _get_data_firms(self) -> list[dict[str, str]]:
         """Получает данные по фирмам.
@@ -329,19 +337,18 @@ class Parser(ParserSettings):
             email = self._get_contact(firm_data, 'email')
             site = self._get_contact(firm_data, 'website')
             phone = self._get_contact(firm_data, 'phone')
-            firms.append(
-                {
-                    'name': name,
-                    'phone': phone,
-                    'address': address,
-                    'email': email,
-                    'image_href': image,
-                    'site': site,
-                    'work_schedule': work_schedule,
-                    'link': self._get_firm_link(firm_id),
-                }
-            )
-
+            firm = {
+                'name': name,
+                'phone': phone,
+                'address': address,
+                'email': email,
+                'image_href': image,
+                'site': site,
+                'work_schedule': work_schedule,
+                'link': self._get_firm_link(firm_id),
+            }
+            firms.append(firm)
+            self.signal_parse_firm(firm)
             self.driver.execute_script('window.close()')
             self.driver.switch_to.window(window_before)
         return firms
@@ -370,18 +377,19 @@ class Parser(ParserSettings):
         except JavascriptException:
             return firms
 
-    def parsing(self) -> list:
+    def parsing(self) -> RubricsData:
         """Полный парсинг фирм с рубриками и подрубриками.
 
         Returns:
-            list: возвращает список данных по фирмам.
+            RubricsData: данных по фирмам.
         """
         a_rubrics = self._get_rubrics()
         data = {}
         for a_rubric in a_rubrics:
-            data[a_rubric[0]] = {}
+            rubric_name = a_rubric[0]
+            data[rubric_name] = {}
             a_subrubrics = self._get_subrubrics(a_rubric)
             for a_subrubric in a_subrubrics:
                 firms = self._get_firms(a_subrubric)
-                data[a_rubric[0]][a_subrubric[0]] = firms
+                data[rubric_name][a_subrubric[0]] = firms
         return data

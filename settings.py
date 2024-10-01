@@ -2,7 +2,7 @@ class ParserSettings:
     """Настройки парсера."""
 
     WEBSITE = 'https://2gis.ru'
-    SLUG_SITY = 'anadyr'
+    SLUG_CITY = 'moscow'
     SLUG_FIRM = 'firm'
     SLUG_RUBRICS = 'rubrics'
     SLUG_SUBRUBRICS = 'subrubrics'
@@ -19,14 +19,14 @@ class ParserSettings:
     CLASS_NAME_BLOCK = '_zjunba'
     CLASS_NAME = '_1cd6avd'
 
-    VALIDATE_NAME_CITY = 'Анадырь'
+    VALIDATE_NAME_CITY = 'Москва'
     LOG_LEVEL = 'log-level=3'
 
 
 class GUISettings:
     """Настройки графического интерфейса."""
 
-    REGULAR_NAME_SITY = r'^[А-ЯЁ][а-яё]+(?:[ _-][А-ЯЁ][а-яё]+)*$'
-    REGULAR_SLUG_SITY = r'^[a-z0-9]+(?:[_-][a-z0-9]+)*$'
+    REGULAR_NAME_CITY = r'^[А-ЯЁ][а-яё]+(?:[ _-][А-ЯЁ][а-яё]+)*$'
+    REGULAR_SLUG_CITY = r'^[a-z0-9]+(?:[_-][a-z0-9]+)*$'
     MAX_ROW_CONSOLE = 21
     FORMAT_TIME = '%H:%M:%S'
