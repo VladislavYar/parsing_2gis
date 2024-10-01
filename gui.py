@@ -151,6 +151,7 @@ class GUI(GUISettings):
         self.thread = ParsingFirmRubricTread(
             self._set_row_in_console,
             self.win.list_rubrics.currentItem(),
+            self.win.slug_city.text(),
             self.win.name_city.text(),
         )
         self.thread.finished.connect(self.thread.deleteLater)

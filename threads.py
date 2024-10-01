@@ -56,6 +56,7 @@ class ParsingFirmRubricTread(BaseParsingTread):
         self,
         set_row_in_console: Any,
         rubric: QListWidgetItem,
+        slug_city: str,
         validate_name_city: str,
     ) -> None:
         """Инициализация потока.
@@ -72,6 +73,7 @@ class ParsingFirmRubricTread(BaseParsingTread):
         self.parser = Parser()
         self.parser.signal_parse_firm = self._message_parse_firm
         self.parser.VALIDATE_NAME_CITY = validate_name_city
+        self.parser.SLUG_CITY = slug_city
 
     def _parsing_subrubric_firm(self) -> tuple[str, FirmSubrubricData]:
         """Парсинг фирм подрубрики.
