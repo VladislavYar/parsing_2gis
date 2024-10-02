@@ -16,7 +16,7 @@ def validate_slug_city(value: str) -> str:
     Returns:
         str: slug города.
     """
-    reg = GUISettings.REGULAR_SLUG_CITY
+    reg = GUISettings.REGULAR_SLUG
     pattern = re.compile(reg)
     if not pattern.match(value):
         raise ArgumentTypeError(

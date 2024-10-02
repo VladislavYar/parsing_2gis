@@ -26,7 +26,39 @@ class ParserSettings:
 class GUISettings:
     """Настройки графического интерфейса."""
 
-    REGULAR_NAME_CITY = r'^[А-ЯЁ][а-яё]+(?:[ _-][А-ЯЁ][а-яё]+)*$'
-    REGULAR_SLUG_CITY = r'^[a-z0-9]+(?:[_-][a-z0-9]+)*$'
     MAX_ROW_CONSOLE = 21
     FORMAT_TIME = '%H:%M:%S'
+
+    REGULAR_NAME_CITY = r'^[А-ЯЁ][а-яё]+(?:[ _-][А-ЯЁ][а-яё]+)*$'
+    REGULAR_SLUG = r'^[a-z0-9]+(?:[_-][a-z0-9]+)*$'
+    REGULAR_URL = (
+        r'^(?:http|https)?://'
+        r'(?:(?:[A-z0-9](?:[A-z0-9-]{0,61}[A-z0-9])?\.)'
+        r'+(?:[A-z]{2,6}\.?|[A-z0-9-]{2,}\.?)|'
+        r'localhost|'
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+        r'(?::\d+)?'
+        r'(?:/?|[/?]\S+)$'
+    )
+    REGULAR_PHONE = r'^\+7\d{10}$'
+    REGULAR_EMAIL = (
+        r'(?:[a-z0-9!#$%&'
+        r"'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"
+        r'"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|'
+        r'\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9]'
+        r'(?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|'
+        r'\[(?:(?:25[0-5]|2[0-4][0-9]|'
+        r'[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|'
+        r'[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:'
+        r'(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|'
+        r'\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])'
+    )
+    REGULAR_WORK_SCHEDULE = r'^\d{2}:\d{2}$'
+
+    MAX_LEN_NAME = 255
+    MAX_LEN_ADDRESS = 255
+    MAX_LEN_IMAGE_HREF = 255
+    MAX_LEN_EMAIL = 255
+    MAX_LEN_SITE = 255
+
+    KEY_DAY = ('Fri', 'Mon', 'Sat', 'Sun', 'Thu', 'Tue', 'Wed')

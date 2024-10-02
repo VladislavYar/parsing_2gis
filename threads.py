@@ -5,10 +5,77 @@ import json
 
 from PyQt6.QtCore import pyqtSignal, QThread
 from PyQt6.QtWidgets import QListWidgetItem
+import requests
+from requests.exceptions import ConnectionError
 
 from parser import Parser
 from typings import RubricsData, FirmRubricData, FirmSubrubricData
 from exceptions import NoCityOn2GISException
+
+
+class SendFirmsToServerThread(QThread):
+    """Поток отправки фирм на сервер."""
+
+    load_finished = pyqtSignal(object)
+
+    def __init__(
+        self,
+        firms: list[dict[str, str]],
+        slug_city: str,
+        slug_rubric: str,
+        url_api: str,
+        set_message_save_form: Any,
+        auth_data: str | None = None,
+    ) -> None:
+        """Инициализация потока
+
+        Args:
+            firms (list[dict[str, str]]): фирмы.
+            slug_city (str): slug города на сервере.
+            slug_rubric (str): slug рубрики на сервере.
+            url_api (str): URL API для отправки данных.
+            set_message_save_form (Any): метод установки сообщения.
+            auth_data (str | None, optional):
+                Данные аутентификации. Defaults to None.
+        """
+        super().__init__()
+        self.firms = firms
+        self.slug_city = slug_city
+        self.slug_rubric = slug_rubric
+        self.url_api = url_api
+        self.set_message_save_form = set_message_save_form
+        self.auth_data = auth_data
+
+    def _send_firms(self) -> None:
+        """Отправка фирм на сервер."""
+        try:
+            response = requests.post(
+                self.url_api,
+                json={
+                    'firms': self.firms,
+                    'city': self.slug_city,
+                    'rubric': self.slug_rubric,
+                },
+            )
+            if response.status_code == 201:
+                self.set_message_save_form('Фирмы загружаются', 3, 'green')
+            elif response.status_code == 400:
+                self.set_message_save_form('Ошибка валидации', 3, 'red')
+            elif response.status_code == 401:
+                self.set_message_save_form('Ошибка аутентификации', 3, 'red')
+            else:
+                self.set_message_save_form(
+                    'Ошибка, попробуйте позже',
+                    3,
+                    'red',
+                )
+        except ConnectionError:
+            self.set_message_save_form('Ошибка соединения', 3, 'red')
+
+    def run(self) -> None:
+        """Запуск потока."""
+        self._send_firms()
+        self.load_finished.emit(True)
 
 
 class BaseParsingTread(QThread):
