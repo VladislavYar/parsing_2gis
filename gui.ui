@@ -27,8 +27,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>635</width>
-    <height>1000</height>
+    <width>620</width>
+    <height>635</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -48,10 +48,16 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="minimumSize">
+    <size>
+     <width>620</width>
+     <height>600</height>
+    </size>
+   </property>
    <property name="maximumSize">
     <size>
      <width>620</width>
-     <height>620</height>
+     <height>600</height>
     </size>
    </property>
    <property name="contextMenuPolicy">

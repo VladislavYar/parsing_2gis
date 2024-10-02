@@ -48,9 +48,13 @@ class SendFirmsToServerThread(QThread):
 
     def _send_firms(self) -> None:
         """Отправка фирм на сервер."""
+        headers = None
+        if self.auth_data:
+            headers = {'Authorization': self.auth_data}
         try:
             response = requests.post(
                 self.url_api,
+                headers=headers,
                 json={
                     'firms': self.firms,
                     'city': self.slug_city,
