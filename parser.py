@@ -93,7 +93,7 @@ class Parser(ParserSettings):
                 f'.{self.CLASS_CONTENT_BLOCK}:nth-child(2) '
                 f'a.{self.CLASS_RUBRICS}'
             )
-            self._waiting_element(1, selector)
+            self._waiting_element(5, selector)
             a_subrubrics = self.driver.find_elements(By.CSS_SELECTOR, selector)
         else:
             selector = (
@@ -101,7 +101,7 @@ class Parser(ParserSettings):
                 f'a.{self.CLASS_SUBRUBRICS}'
             )
             try:
-                self._waiting_element(1, selector)
+                self._waiting_element(5, selector)
                 a_subrubrics = self.driver.find_elements(
                     By.CSS_SELECTOR,
                     selector,
@@ -372,7 +372,7 @@ class Parser(ParserSettings):
                     f'let element = document.querySelector("{selector}");'
                     'element.click();'
                 )
-                self._waiting_element(1, f'div.{self.CLASS_FIRM_BLOCK}')
+                self._waiting_element(5, f'div.{self.CLASS_FIRM_BLOCK}')
                 firms.extend(self._get_data_firms())
         except JavascriptException:
             return firms
