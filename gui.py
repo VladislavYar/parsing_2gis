@@ -452,6 +452,7 @@ class GUI(GUISettings):
                         3,
                         'red',
                     )
+                    return
                 return data['firms']
         except json.decoder.JSONDecodeError:
             self._set_message_save_form(
