@@ -40,8 +40,9 @@
 
 <h3 align="center">Стек</h3>
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-^3.11-red?style=flat&logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/Python-3.12-red?style=flat&logo=python&logoColor=white">
   <img src="https://img.shields.io/badge/PyQt-6-red?style=flat&logo=qt&logoColor=white">
+  <img src="https://img.shields.io/badge/selenium-4.25.0-red?style=flat&logo=selenium&logoColor=white">
   <img src="https://img.shields.io/badge/Poetry-Latest-red?style=flat&logo=poetry&logoColor=white">
   <img src="https://img.shields.io/badge/Pre commit-Latest-red?style=flat&logo=Precommit&logoColor=white">
 </p>
