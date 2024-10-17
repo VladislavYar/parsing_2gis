@@ -201,13 +201,26 @@ class ParsingFirmRubricTread(BaseParsingTread):
 
     def run(self) -> None:
         """Запуск потока."""
-        if self.rubric.is_rubric:
-            name, data = self._parsing_rubric_firm()
-        else:
-            name, data = self._parsing_subrubric_firm()
+        try:
+            if self.rubric.is_rubric:
+                name, data = self._parsing_rubric_firm()
+            else:
+                name, data = self._parsing_subrubric_firm()
+            self._save_data(name, f'Фирмы рубрики "{name}" сохранены', data)
+            self.load_finished.emit(True)
+        except Exception as e:
+            self.set_row_in_console(
+                f'Лог: {e}',
+                'red',
+                'Ошибка',
+            )
+            self.set_row_in_console(
+                'Повторите попытку',
+                'red',
+                'Ошибка',
+            )
+            self.load_finished.emit(True)
         self.parser.driver.close()
-        self._save_data(name, f'Фирмы рубрики "{name}" сохранены', data)
-        self.load_finished.emit(True)
 
 
 class ParsingFirmRubricsThread(BaseParsingTread):
@@ -255,6 +268,18 @@ class ParsingFirmRubricsThread(BaseParsingTread):
         except NoCityOn2GISException:
             self.set_row_in_console(
                 'Город с таким slug не существует',
+                'red',
+                'Ошибка',
+            )
+            self.load_finished.emit(None)
+        except Exception as e:
+            self.set_row_in_console(
+                f'Лог: {e}',
+                'red',
+                'Ошибка',
+            )
+            self.set_row_in_console(
+                'Повторите попытку',
                 'red',
                 'Ошибка',
             )
@@ -321,7 +346,6 @@ class ParsingRubricsThread(BaseParsingTread):
             'blue',
             self.support_info,
         )
-        self.parser.driver.close()
         return data
 
     def run(self) -> None:
@@ -331,10 +355,22 @@ class ParsingRubricsThread(BaseParsingTread):
             self._save_data('rubrics', 'Рубрики сохранены', data)
             self.load_finished.emit(data)
         except NoCityOn2GISException:
-            self.parser.driver.close()
             self.set_row_in_console(
                 'Город с таким slug не существует',
                 'red',
                 'Ошибка',
             )
             self.load_finished.emit({})
+        except Exception as e:
+            self.set_row_in_console(
+                f'Лог: {e}',
+                'red',
+                'Ошибка',
+            )
+            self.set_row_in_console(
+                'Повторите попытку',
+                'red',
+                'Ошибка',
+            )
+            self.load_finished.emit({})
+        self.parser.driver.close()

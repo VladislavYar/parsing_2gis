@@ -2,8 +2,9 @@ from urllib.parse import urljoin, urlparse, parse_qs
 from typing import Any
 import json
 import re
+import asyncio
 
-import requests
+import aiohttp
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -167,7 +168,7 @@ class Parser(ParserSettings):
         Returns:
             bool: флаг валидации.
         """
-        for location in firm['adm_div']:
+        for location in firm.get('adm_div', []):
             if location['type'] != 'city':
                 continue
             if location['name'] == self.VALIDATE_NAME_CITY:
@@ -202,7 +203,7 @@ class Parser(ParserSettings):
             str: адрес фирмы.
         """
         address = firm_data.get('address_name')
-        if not address:
+        if not address or len(address) > self.MAX_LEN_ADDRESS:
             return self.VALIDATE_NAME_CITY
         return address
 
@@ -240,12 +241,18 @@ class Parser(ParserSettings):
                         return ''
                     case 'email':
                         value = contact['value']
-                        if re.compile(self.REGULAR_EMAIL).match(value):
+                        if (
+                            re.compile(self.REGULAR_EMAIL).match(value)
+                            and len(value) <= self.MAX_LEN_EMAIL
+                        ):
                             return value
                         return ''
                     case 'website':
                         value = contact['url']
-                        if re.compile(self.REGULAR_URL).match(value):
+                        if (
+                            re.compile(self.REGULAR_URL).match(value)
+                            and len(value) <= self.MAX_LEN_SITE
+                        ):
                             return value
                         return ''
         return ''
@@ -295,19 +302,20 @@ class Parser(ParserSettings):
         Returns:
             str: данные по запросу.
         """
-        entries = self.driver.get_log('performance')
-        for entry in entries:
-            message = json.loads(entry['message'])['message']
-            if message['method'] != 'Network.requestWillBeSent':
-                continue
-            params = message['params']
-            request_url = params['request']['url']
-            if check_string not in request_url:
-                continue
-            return {
-                'id': params['requestId'],
-                'query': parse_qs(urlparse(request_url).query),
-            }
+        while True:
+            entries = self.driver.get_log('performance')
+            for entry in entries:
+                message = json.loads(entry['message'])['message']
+                if message['method'] != 'Network.requestWillBeSent':
+                    continue
+                params = message['params']
+                request_url = params['request']['url']
+                if check_string not in request_url:
+                    continue
+                return {
+                    'id': params['requestId'],
+                    'query': parse_qs(urlparse(request_url).query),
+                }
 
     def signal_parse_firm(self, *arg, **kwarg) -> None:
         """Сигнал парсинга фирмы."""
@@ -524,7 +532,7 @@ class Parser(ParserSettings):
             f'r={data['r']}'
         )
 
-    def _get_firm_from_api(self, url: str) -> dict[str, str]:
+    async def _get_firm_from_api(self, url: str) -> dict[str, str]:
         """Отдаёт данные по фирме из API 2GIS.
 
         Args:
@@ -534,11 +542,14 @@ class Parser(ParserSettings):
             dict[str, str]: данные по фирме из API 2GIS.
         """
         headers = {'User-Agent': self.USER_AGENT}
-        response = requests.get(url, headers=headers)
-        firm = response.json()['result']['items'][0]
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers) as response:
+                data = await response.json()
+        firm = data['result']['items'][0]
         if not self._validate_address(firm):
             return {}
-        return {
+        firm = {
+            'id_2gis': firm['id'].split('_')[0],
             'name': self._get_name(firm),
             'phone': self._get_contact(firm, 'phone'),
             'address': self._get_address(firm),
@@ -547,8 +558,10 @@ class Parser(ParserSettings):
             'site': self._get_contact(firm, 'website'),
             'work_schedule': self._get_work_schedule(firm),
         }
+        self.signal_parse_firm(firm)
+        return firm
 
-    def _get_firms_data(
+    async def _get_firms_data(
         self,
         firms: list[dict[str, Any]],
         meta_data: dict[str, str],
@@ -561,15 +574,14 @@ class Parser(ParserSettings):
         Returns:
             list[dict[str, str]]: список данных по фирмам.
         """
-        data = []
-        for firm in firms:
-            url = self._get_url_firm(firm, meta_data)
-            firm = self._get_firm_from_api(url)
-            if not firm:
-                continue
-            data.append(firm)
-            self.signal_parse_firm(firm)
-        return data
+        urls = [self._get_url_firm(firm, meta_data) for firm in firms]
+        return [
+            firm
+            for firm in await asyncio.gather(
+                *[self._get_firm_from_api(url) for url in urls]
+            )
+            if firm
+        ]
 
     def _get_firms(self, a_subrubric: tuple[str, str]) -> list[dict[str, str]]:
         """Отдаёт список данных по фирмам.
@@ -586,8 +598,12 @@ class Parser(ParserSettings):
         firms = []
         while True:
             firms_page = self._get_firms_page(count_page)
-            firms.extend(self._get_firms_data(firms_page, meta_data))
+            firms.extend(
+                asyncio.run(self._get_firms_data(firms_page, meta_data))
+            )
             count_page += 1
+            if self.MAX_PAGE == count_page:
+                return firms
             if not self._check_memory():
                 self._get_page_subrubric(a_subrubric[1])
             try:

@@ -387,6 +387,11 @@ class GUI(GUISettings):
         """
         return_validate = (
             self._validate_field(
+                firm.get('id_2gis'),
+                regular=self.REGULAR_ID_2GIS,
+                required=True,
+            ),
+            self._validate_field(
                 firm.get('name'),
                 self.MAX_LEN_NAME,
                 required=True,

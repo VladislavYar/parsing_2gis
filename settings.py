@@ -24,6 +24,10 @@ class BaseSettings:
         r'\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])'
     )
 
+    MAX_LEN_ADDRESS = 255
+    MAX_LEN_EMAIL = 255
+    MAX_LEN_SITE = 255
+
 
 class ParserSettings(BaseSettings):
     """Настройки парсера."""
@@ -34,6 +38,7 @@ class ParserSettings(BaseSettings):
     SLUG_RUBRICS = 'rubrics'
     SLUG_SUBRUBRICS = 'subrubrics'
     SLUG_RUBRIC_ID = 'rubricId'
+
     API_2GIS = 'https://catalog.api.2gis.ru'
     API_2GIS_ITEMS = '/3.0/items'
     API_2GIS_BY_ID = f'{API_2GIS_ITEMS}/byid'
@@ -85,6 +90,7 @@ class ParserSettings(BaseSettings):
 
     VALIDATE_NAME_CITY = 'Москва'
     MAX_RAM_GB = 3
+    MAX_PAGE = 834
     USER_AGENT = (
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) '
         'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -140,11 +146,9 @@ class GUISettings(BaseSettings):
     REGULAR_NAME_CITY = r'^[А-ЯЁ][а-яё]+(?:[ _-][А-ЯЁ][а-яё]+)*$'
     REGULAR_SLUG = r'^[a-z0-9]+(?:[_-][a-z0-9]+)*$'
     REGULAR_WORK_SCHEDULE = r'^\d{2}:\d{2}$'
+    REGULAR_ID_2GIS = r'^[1-9][0-9]*$'
 
     MAX_LEN_NAME = 255
-    MAX_LEN_ADDRESS = 255
     MAX_LEN_IMAGE_HREF = 255
-    MAX_LEN_EMAIL = 255
-    MAX_LEN_SITE = 255
 
     KEY_DAY = ('Fri', 'Mon', 'Sat', 'Sun', 'Thu', 'Tue', 'Wed')
