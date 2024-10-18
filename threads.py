@@ -125,7 +125,9 @@ class BaseParsingTread(QThread):
             parents=True,
             exist_ok=True,
         )
-        with open(join(city_dir, f'{name_file}.json'), 'w') as file:
+        with open(
+            join(city_dir, f'{name_file.replace('/', '')}.json'), 'w'
+        ) as file:
             json.dump(data, file)
         self.set_row_in_console(message_console, 'green', self.support_info)
 
