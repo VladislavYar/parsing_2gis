@@ -282,7 +282,9 @@ class Parser(ParserSettings):
         """
         if name := firm.get('name_ex', {}).get('primary'):
             return name
-        return firm['name']
+        if name := firm.get('name'):
+            return name
+        return firm['full_name']
 
     def signal_parse_firms(self, *arg, **kwarg) -> None:
         """Сигнал парсинга фирм."""
