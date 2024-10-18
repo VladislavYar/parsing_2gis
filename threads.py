@@ -215,9 +215,19 @@ class ParsingFirmRubricTread(BaseParsingTread):
         try:
             if self.rubric.is_rubric:
                 name, data = self._parsing_rubric_firm()
+                for subrubrics in data.values():
+                    for subrubric in subrubrics:
+                        name = list(subrubric.keys())[0]
+                        self._save_data(
+                            name,
+                            f'Фирмы рубрики "{name}" сохранены',
+                            subrubric[name],
+                        )
             else:
                 name, data = self._parsing_subrubric_firm()
-            self._save_data(name, f'Фирмы рубрики "{name}" сохранены', data)
+                self._save_data(
+                    name, f'Фирмы рубрики "{name}" сохранены', data
+                )
         except Exception as e:
             self.set_row_in_console(
                 f'Лог: {e}',
@@ -272,7 +282,13 @@ class ParsingFirmRubricsThread(BaseParsingTread):
                 'blue',
                 self.support_info,
             )
-            self._save_data('all_firms', 'Фирмы всех рубрик сохранены', data)
+            for subrubrics in data.values():
+                for name, firms in subrubrics.items():
+                    self._save_data(
+                        name,
+                        f'Фирмы рубрики "{name}" сохранены',
+                        firms,
+                    )
             self.load_finished.emit(None)
         except NoCityOn2GISException:
             self.set_row_in_console(
