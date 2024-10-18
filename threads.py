@@ -87,13 +87,25 @@ class BaseParsingTread(QThread):
 
     load_finished = pyqtSignal(object)
 
-    def _message_parse_firm(self, data: dict[str, str]) -> None:
-        """Сообщение о парсинге фирмы."""
+    def _message_parse_firms(
+        self,
+        name_subrubric: str,
+        count_no_duplicates_firms: int,
+        count_duplicates_firms: int,
+    ) -> None:
+        """Сообщение о парсинге фирм.
+
+        Args:
+            name_subrubric (str): название подрубрики
+            count_no_duplicates_firms (int): кол-во фирм без дубликатов.
+            count_duplicates_firms (int): количество дубликатов.
+        """
+
         self.set_row_in_console(
-            f'Фирма "{data['name']}" спаршена',
-            support_info=f'Парсинг фирм [{self.count_firm}]',
+            f'Сохранено фирм: {count_no_duplicates_firms}, '
+            f'удалено дубликатов: {count_duplicates_firms}',
+            support_info=f'Парсинг фирм [{name_subrubric}]',
         )
-        self.count_firm += 1
 
     def _save_data(
         self,
@@ -140,9 +152,8 @@ class ParsingFirmRubricTread(BaseParsingTread):
         super().__init__()
         self.set_row_in_console = set_row_in_console
         self.rubric = rubric
-        self.count_firm = 1
         self.parser = Parser()
-        self.parser.signal_parse_firm = self._message_parse_firm
+        self.parser.signal_parse_firms = self._message_parse_firms
         self.parser.VALIDATE_NAME_CITY = validate_name_city
         self.parser.SLUG_CITY = slug_city
 
@@ -159,7 +170,7 @@ class ParsingFirmRubricTread(BaseParsingTread):
             'blue',
             self.support_info,
         )
-        firms = self.parser._get_firms((name, self.rubric.url))
+        firms, _ = self.parser._get_firms((name, self.rubric.url))
         self.set_row_in_console(
             f'Конец парсинга фирм подрубрики "{name}"',
             'blue',
@@ -186,7 +197,7 @@ class ParsingFirmRubricTread(BaseParsingTread):
                 f'Старт парсинга фирм подрубрики "{name}"',
                 support_info=self.support_info,
             )
-            firms = self.parser._get_firms((name, subrubric['url']))
+            firms, _ = self.parser._get_firms((name, subrubric['url']))
             data['subrubrics'].append({name: firms})
             self.set_row_in_console(
                 f'Конец парсинга фирм подрубрики "{name}"',
@@ -207,7 +218,6 @@ class ParsingFirmRubricTread(BaseParsingTread):
             else:
                 name, data = self._parsing_subrubric_firm()
             self._save_data(name, f'Фирмы рубрики "{name}" сохранены', data)
-            self.load_finished.emit(True)
         except Exception as e:
             self.set_row_in_console(
                 f'Лог: {e}',
@@ -219,7 +229,7 @@ class ParsingFirmRubricTread(BaseParsingTread):
                 'red',
                 'Ошибка',
             )
-            self.load_finished.emit(True)
+        self.load_finished.emit(True)
         self.parser.driver.close()
 
 
@@ -244,8 +254,7 @@ class ParsingFirmRubricsThread(BaseParsingTread):
         super().__init__()
         self.set_row_in_console = set_row_in_console
         self.parser = Parser()
-        self.count_firm = 1
-        self.parser.signal_parse_firm = self._message_parse_firm
+        self.parser.signal_parse_firms = self._message_parse_firms
         self.parser.SLUG_CITY = slug_city
         self.parser.VALIDATE_NAME_CITY = validate_name_city
 
