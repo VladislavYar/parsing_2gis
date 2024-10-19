@@ -223,7 +223,7 @@ class ParsingFirmRubricTread(BaseParsingTread):
                         self._save_data(
                             name,
                             f'Фирмы рубрики "{name}" сохранены',
-                            subrubric[name],
+                            {'firms': subrubric[name]},
                         )
             else:
                 name, data = self._parsing_subrubric_firm()
@@ -289,7 +289,7 @@ class ParsingFirmRubricsThread(BaseParsingTread):
                     self._save_data(
                         name,
                         f'Фирмы рубрики "{name}" сохранены',
-                        firms,
+                        {'firms': firms},
                     )
             self.load_finished.emit(None)
         except NoCityOn2GISException:
