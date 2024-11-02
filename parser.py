@@ -264,11 +264,11 @@ class Parser(ParserSettings):
             'schedule', {}
         )
         if not schedule:
-            schedule
+            return schedule
         return {
             day: data['working_hours'][0]
             for day, data in schedule.items()
-            if day not in ('comment', 'is_24x7')
+            if day not in self.KEYS_SKIP_SCHEDULE
         }
 
     def _get_name(self, firm: dict[str, Any]) -> str:

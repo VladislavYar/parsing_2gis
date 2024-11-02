@@ -101,6 +101,13 @@ class ParserSettings(BaseSettings):
         'https://disk.2gis.*/styles/*',
     )
     PARSING_BRANCHES = False
+    KEYS_SKIP_SCHEDULE = (
+        'comment',
+        'is_24x7',
+        'date_from',
+        'date_to',
+        'description',
+    )
 
 
 class GUISettings(BaseSettings):
