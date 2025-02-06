@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 class BaseSettings:
     """Базовые настройки."""
 
@@ -125,3 +128,38 @@ class GUISettings(BaseSettings):
     MAX_LEN_IMAGE_HREF = 255
 
     KEY_DAY = ('Fri', 'Mon', 'Sat', 'Sun', 'Thu', 'Tue', 'Wed')
+
+    BASE_PATH = Path(__file__).parent
+    GUI_UI_PATH = BASE_PATH / 'gui.ui'
+    SAVE_FORM_UI_PATH = BASE_PATH / 'save_form.ui'
+
+
+class CompilationSettings:
+    """Настройки компиляции."""
+
+    FILE_NAME = 'parser 2gis'
+    GUI_FILE_NAME = f'{FILE_NAME} gui'
+    LOGO_NAME = 'logo.ico'
+
+    BASE_PATH = Path(__file__).parent
+    DIST_PATH = BASE_PATH / 'dist'
+    BUILD_PATH = BASE_PATH / 'build'
+    PARSER_SPEC_PATH = BASE_PATH / f'{FILE_NAME}.spec'
+    GUI_PARSER_SPEC_PATH = BASE_PATH / f'{GUI_FILE_NAME}.spec'
+
+    ARGS = (
+        '--onefile',
+        '--windowed',
+        '--add-data',
+        'compilation:compilation',
+        '--add-data',
+        'dist:dist',
+        '--add-data',
+        'gui.ui:.',
+        '--add-data',
+        'save_form.ui:.',
+        '--add-data',
+        'api.svg:.',
+        '--add-data',
+        'logo.svg:.',
+    )

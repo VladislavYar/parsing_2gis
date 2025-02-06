@@ -512,8 +512,8 @@ class GUI(GUISettings):
     def __init__(self) -> None:
         """Инициализация GUI."""
         app = QtWidgets.QApplication([])
-        self.win: QMainWindow = uic.loadUi('gui.ui')
-        self.save_form: QMainWindow = uic.loadUi('save_form.ui')
+        self.win: QMainWindow = uic.loadUi(GUISettings.GUI_UI_PATH)
+        self.save_form: QMainWindow = uic.loadUi(GUISettings.SAVE_FORM_UI_PATH)
         self._set_validators()
         self._set_connects()
         self._set_settings()
