@@ -14,7 +14,7 @@ CLEAR_FUNC = (
 
 
 def clear() -> None:
-    """Очиска старой компиляции."""
+    """Очистка старой компиляции."""
     for func in CLEAR_FUNC:
         try:
             func()
