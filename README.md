@@ -14,6 +14,7 @@
   <h3>Примечания</h3>
 </div>
   <p align="center">Все команды выполнять из корневой папки проекта.</p>
+  <p align="center">Команда компиляции в файл формата <code>exe</code>: <code>python -m compilation.compilation</code>.</p>
 <hr>
 
 <h3 align="center">Как запустить</h3>
@@ -36,15 +37,22 @@
   </ul>
 </details>
 
+<details>
+  <p align="center"><summary align="center"><ins>Через файлы формата <code>exe</code></ins></summary></p>
+  <ul>
+    <li align="center">В папке <a href="https://github.com/VladislavYar/parsing_2gis/tree/main/dist">dist</a> лежит два файла: <code>parser 2gis gui.exe</code> - для запуска сразу же с графическим интерфейсом и <code>parser 2gis.exe</code> - для работы с парсером через аргументы</li>
+  </ul>
+</details>
 <hr>
 
 <h3 align="center">Стек</h3>
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.12-red?style=flat&logo=python&logoColor=white">
   <img src="https://img.shields.io/badge/PyQt-6-red?style=flat&logo=qt&logoColor=white">
-  <img src="https://img.shields.io/badge/selenium-4.25.0-red?style=flat&logo=selenium&logoColor=white">
-  <img src="https://img.shields.io/badge/aiohttp-3.10.10-red?style=flat&logo=aiohttp&logoColor=white">
+  <img src="https://img.shields.io/badge/Selenium-4.25.0-red?style=flat&logo=selenium&logoColor=white">
+  <img src="https://img.shields.io/badge/Aiohttp-3.10.10-red?style=flat&logo=aiohttp&logoColor=white">
   <img src="https://img.shields.io/badge/Poetry-Latest-red?style=flat&logo=poetry&logoColor=white">
   <img src="https://img.shields.io/badge/Pre commit-Latest-red?style=flat&logo=Precommit&logoColor=white">
+  <img src="https://img.shields.io/badge/Pyinstaller-Latest-red?style=flat">
 </p>
 <hr>
