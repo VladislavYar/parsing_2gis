@@ -53,7 +53,7 @@ class ParserSettings(BaseSettings):
     GX = 33
     MX = 5381
 
-    CLASS_RUBRICS = '_x4ac6o'
+    CLASS_RUBRICS = '_591jgc'
     CLASS_CONTENT_BLOCK = '_r47nf'
     CLASS_SUBRUBRICS = '_1rehek'
 
@@ -76,6 +76,7 @@ class ParserSettings(BaseSettings):
         '--disable-dev-shm-usage',
         '-–nouse-idle-notification',
         '--ignore-certificate-errors',
+        '--enable-unsafe-swiftshader',
     )
     BLOCKED_URLS = (
         'https://favorites.api.2gis.*/*',
